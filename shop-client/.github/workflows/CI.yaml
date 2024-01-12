@@ -1,0 +1,32 @@
+name: CI shop client
+
+on: push
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v2
+
+            - name: Install dependencies
+              run: npm install
+
+            - name: Linter
+              run: npm run lint
+
+            - name: Build
+              run: npm run build
+
+    dockerize:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v3
+
+            - name: Docker compose
+              uses: isbang/compose-action@v1.4.1
+              with:
+                  compose-file: './docker-compose.yml'

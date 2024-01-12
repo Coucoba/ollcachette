@@ -1,0 +1,9 @@
+version: '3.9'
+
+services:
+    front:
+        container_name: shop-client
+        build: .
+        ports:
+            - '4200:4200'
+        restart: always
