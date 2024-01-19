@@ -10,8 +10,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -27,6 +27,10 @@ public class ShopService {
     @Transactional
     public Shop createShop(Shop shop) throws Exception {
         try {
+            for( int j = 0; j < shop.getOpeningHours().size();++j){
+                shop.getOpeningHours().sort();
+            }
+
             Shop newShop = shopRepository.save(shop);
             // Refresh the entity after the save. Otherwise, @Formula does not work.
             em.flush();

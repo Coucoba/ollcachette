@@ -3,10 +3,9 @@ package fr.fullstack.shopapp.controller;
 import fr.fullstack.shopapp.model.Product;
 import fr.fullstack.shopapp.service.ProductService;
 import fr.fullstack.shopapp.util.ErrorValidation;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,7 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import java.util.Optional;
 
 @RestController
@@ -34,7 +33,7 @@ public class ProductController {
     @Autowired
     private ProductService service;
 
-    @ApiOperation(value = "Create a product")
+    @Operation(summary = "Create a product")
     @PostMapping
     public ResponseEntity<Product> createProduct(@Valid @RequestBody Product product, Errors errors) {
         if (errors.hasErrors()) {
@@ -49,7 +48,7 @@ public class ProductController {
         }
     }
 
-    @ApiOperation(value = "Delete a product by its id")
+    @Operation(summary = "Delete a product by its id")
     @DeleteMapping("/{id}")
     public HttpStatus deleteProduct(@PathVariable long id) {
         try {
@@ -60,7 +59,7 @@ public class ProductController {
         }
     }
 
-    @ApiOperation(value = "Get a product by id")
+    @Operation(summary = "Get a product by id")
     @GetMapping("/{id}")
     public ResponseEntity<Product> getProductById(@PathVariable long id) {
         try {
@@ -70,21 +69,20 @@ public class ProductController {
         }
     }
 
-    @ApiOperation(value = "Get products (filtering by shop and category is possible)")
+    @Operation(summary = "Get products (filtering by shop and category is possible)")
     @GetMapping
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "page",
-                              dataType = "integer",
-                              paramType = "query",
-                              value = "Results page you want to retrieve (0..N)",
-                              defaultValue = "0"),
-            @ApiImplicitParam(name = "size", dataType = "integer", paramType = "query",
-                              value = "Number of records per page", defaultValue = "5"),
+    @Parameters({
+            @Parameter(name = "page",
+                    description = "Results page you want to retrieve (0..N)",
+                    example = "0"),
+            @Parameter(name = "size",
+                    description = "Number of records per page",
+                    example = "5"),
     })
     public ResponseEntity<Page<Product>> getProductsOfShop(
             Pageable pageable,
-            @ApiParam(value = "Id of the shop", example = "1") @RequestParam(required = false) Optional<Long> shopId,
-            @ApiParam(value = "Id of the category", example = "1") @RequestParam(required = false)
+            @Parameter(description = "Id of the shop", example = "1") @RequestParam(required = false) Optional<Long> shopId,
+            @Parameter(description = "Id of the category", example = "1") @RequestParam(required = false)
             Optional<Long> categoryId
     ) {
         return ResponseEntity.ok(
@@ -92,7 +90,7 @@ public class ProductController {
         );
     }
 
-    @ApiOperation(value = "Update a product")
+    @Operation(summary = "Update a product")
     @PutMapping
     public ResponseEntity<Product> updateProduct(@Valid @RequestBody Product product, Errors errors) {
         if (errors.hasErrors()) {
