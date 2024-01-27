@@ -1,5 +1,6 @@
 package fr.fullstack.shopapp.service;
 
+import fr.fullstack.shopapp.model.OpeningHoursShop;
 import fr.fullstack.shopapp.model.Product;
 import fr.fullstack.shopapp.model.Shop;
 import fr.fullstack.shopapp.repository.ShopRepository;
@@ -26,11 +27,14 @@ public class ShopService {
 
     @Transactional
     public Shop createShop(Shop shop) throws Exception {
-        try {
-            for( int j = 0; j < shop.getOpeningHours().size();++j){
-                shop.getOpeningHours().sort();
+        // check if no conflit between time slot
+        var listHours = shop.getOpeningHours();
+        for (var hour : listHours) {
+            if (listHours.stream().anyMatch(h -> isOpen(h, hour))) {
+                throw new Exception("Shop is already Open in one time slot");
             }
-
+        }
+        try {
             Shop newShop = shopRepository.save(shop);
             // Refresh the entity after the save. Otherwise, @Formula does not work.
             em.flush();
@@ -168,5 +172,23 @@ public class ShopService {
         }
 
         return null;
+    }
+
+    private boolean isOpen(OpeningHoursShop h1, OpeningHoursShop h2) {
+        if (h1.getDay() == h2.getDay()) {
+            if (h1.getOpenAt().isBefore(h2.getOpenAt()) && h1.getCloseAt().isAfter(h2.getCloseAt())) {
+                return true;
+            }
+            if (h2.getOpenAt().isBefore(h1.getOpenAt()) && h2.getCloseAt().isAfter(h2.getCloseAt())) {
+                return true;
+            }
+            if (h1.getOpenAt().isBefore(h2.getOpenAt()) && h1.getCloseAt().isAfter(h2.getOpenAt())) {
+                return true;
+            }
+            if (h2.getOpenAt().isBefore(h1.getOpenAt()) && h2.getCloseAt().isAfter(h1.getOpenAt())) {
+                return true;
+            }
+        }
+        return false;
     }
 }
