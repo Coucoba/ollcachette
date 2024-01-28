@@ -1,26 +1,20 @@
 package fr.fullstack.shopapp.model;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
+import lombok.Data;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Entity
 @Table(name = "products")
+@Data
 public class Product {
     @ManyToMany
     @JoinTable(
@@ -37,55 +31,20 @@ public class Product {
     @Size(min = 1, message = "At least one name and one description must be provided")
     private List<@Valid LocalizedProduct> localizedProduct = new ArrayList<LocalizedProduct>();
 
-    private Currency currency;
-
     @Column(nullable = false)
     @PositiveOrZero(message = "Price must be positive")
     @NotNull(message = "Price may not be null")
     private float price;
 
-    private float convertedPrice = price * currency.getConversionRate();
+    @Column(nullable = true)
+    private float dollarPrice = price * Currency.DOL.getConversionRate();
+
+    @Column(nullable = true)
+    private float pesoPrice = price * Currency.PES.getConversionRate();
+
+    @Column(nullable = true)
+    private float yenPrice = price * Currency.YEN.getConversionRate();
 
     @ManyToOne
     private Shop shop;
-
-    public List<Category> getCategories() {
-        return categories;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public List<LocalizedProduct> getLocalizedProducts() {
-        return localizedProduct;
-    }
-
-    public float getPrice() {
-        return price;
-    }
-
-    public Shop getShop() {
-        return shop;
-    }
-
-    public void setCategories(List<Category> categories) {
-        this.categories = categories;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public void setLocalizedProducts(List<LocalizedProduct> localizedProduct) {
-        this.localizedProduct = localizedProduct;
-    }
-
-    public void setPrice(float price) {
-        this.price = price;
-    }
-
-    public void setShop(Shop shop) {
-        this.shop = shop;
-    }
 }

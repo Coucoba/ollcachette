@@ -84,6 +84,29 @@ public class ShopController {
         );
     }
 
+    @Operation(summary = "Get shops (sorting and filtering are possible)")
+    @GetMapping("/name")
+    @Parameters({
+            @Parameter(name = "page", description = "Results page you want to retrieve (0..N)", example = "0"),
+            @Parameter(name = "size", description = "Number of records per page", example = "5"),
+    })
+    public ResponseEntity<Page<Shop>> getShopsByName(
+            Pageable pageable,
+            @Parameter(description = "Define that the shops must be in vacations or not", example = "true")
+            @RequestParam(required = false) Optional<Boolean> inVacations,
+            @Parameter(description = "Define that the shops must be created after this date", example = "2022-11-15")
+            @RequestParam(required = false) Optional<String> createdAfter,
+            @Parameter(description = "Define that the shops must be created before this date", example = "2022-11-15")
+            @RequestParam(required = false) Optional<String> createdBefore,
+            @Parameter(description = "Shop name", example = "Test")
+            @RequestParam(required = false) String name
+
+    ) {
+        return ResponseEntity.ok(
+                service.getShopListPlainText(inVacations, createdAfter, createdBefore, pageable, name)
+        );
+    }
+
     @Operation(description = "Get a shop by id")
     @GetMapping("/{id}")
     public ResponseEntity<Shop> getShopById(@PathVariable long id) {

@@ -4,9 +4,11 @@ import fr.fullstack.shopapp.model.OpeningHoursShop;
 import fr.fullstack.shopapp.model.Product;
 import fr.fullstack.shopapp.model.Shop;
 import fr.fullstack.shopapp.repository.ShopRepository;
+import org.hibernate.search.engine.search.query.SearchResult;
 import org.hibernate.search.mapper.orm.Search;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -92,6 +94,36 @@ public class ShopService {
 
         // NONE
         return shopRepository.findByOrderByIdAsc(pageable);
+    }
+
+    public Page<Shop> getShopListPlainText(Optional<Boolean> inVacations, Optional<String> createdBefore, Optional<String> createdAfter, Pageable pageable, String name) {
+        SearchResult<Shop> result = Search.session(em)
+                .search(Shop.class)
+                .where(f -> f.match()
+                        .fields("name")
+                        .matching(name)
+                ).fetchAll();
+        List<Shop> list = result.hits();
+
+        List<Shop> filtered = list.stream().filter(
+                s -> {
+                    boolean keep = true;
+                    if(inVacations.isPresent()) {
+                        keep = inVacations.get().equals(s.isInVacations());
+                    }
+                    if(createdAfter.isPresent()) {
+                        LocalDate afterDate = LocalDate.parse(createdAfter.get());
+                        keep = s.getCreatedAt().isAfter(afterDate);
+                    }
+                    if(createdBefore.isPresent()) {
+                        LocalDate beforeDate = LocalDate.parse(createdBefore.get());
+                        keep = s.getCreatedAt().isBefore(beforeDate);
+                    }
+                    return keep;
+                }
+        ).toList();
+
+        return new PageImpl<>(filtered, pageable, filtered.size());
     }
 
     @Transactional

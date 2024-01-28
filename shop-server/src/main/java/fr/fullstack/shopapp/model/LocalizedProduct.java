@@ -10,9 +10,11 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.Data;
 
 @Entity
 @Table(name = "LocalizedProduct")
+@Data
 public class LocalizedProduct {
     @Column
     @Size(min = 1, max = 255, message = "Description must be between 1 and 255 characters")
@@ -31,36 +33,4 @@ public class LocalizedProduct {
     @Size(min = 1, max = 255, message = "Name must be between 1 and 255 characters")
     @NotNull(message = "Name may not be null")
     private String name;
-
-    public String getDescription() {
-        return description;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public String getLocale() {
-        return locale;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public void setLocale(String locale) {
-        this.locale = locale;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
 }

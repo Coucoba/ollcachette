@@ -2,6 +2,7 @@ package fr.fullstack.shopapp.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Formula;
 import org.hibernate.search.mapper.pojo.mapping.definition.annotation.FullTextField;
@@ -27,6 +28,7 @@ import java.util.List;
 @Entity
 @Table(name = "shops")
 @Indexed(index = "idx_shops")
+@Data
 public class Shop {
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
@@ -61,64 +63,4 @@ public class Shop {
     @OneToMany(mappedBy = "shop", fetch = FetchType.LAZY)
     @JsonIgnore
     private List<Product> products = new ArrayList<Product>();
-
-    public LocalDate getCreatedAt() {
-        return createdAt;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public boolean getInVacations() {
-        return inVacations;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public long getNbCategories() {
-        return nbCategories;
-    }
-
-    public long getNbProducts() {
-        return nbProducts;
-    }
-
-    public List<OpeningHoursShop> getOpeningHours() {
-        return openingHours;
-    }
-
-    public List<Product> getProducts() {
-        return this.products;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public void setInVacations(boolean inVacations) {
-        this.inVacations = inVacations;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setNbCategories(long nbCategories) {
-        this.nbCategories = nbCategories;
-    }
-
-    public void setNbProducts(long nbProducts) {
-        this.nbProducts = nbProducts;
-    }
-
-    public void setOpeningHours(List<OpeningHoursShop> openingHours) {
-        this.openingHours = openingHours;
-    }
-
-    public void setProducts(List<Product> products) {
-        this.products = products;
-    }
 }

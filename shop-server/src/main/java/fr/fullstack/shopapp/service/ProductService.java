@@ -80,7 +80,7 @@ public class ProductService {
     }
 
     private void checkLocalizedProducts(Product product) throws Exception {
-        Optional<LocalizedProduct> localizedProductFr = product.getLocalizedProducts()
+        Optional<LocalizedProduct> localizedProductFr = product.getLocalizedProduct()
                 .stream().filter(o -> o.getLocale().equals("FR")).findFirst();
 
         // A name in french must be at least provided
